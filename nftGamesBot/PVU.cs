@@ -149,8 +149,6 @@ namespace nftGamesBot
 
                             Thread.Sleep(2000);
 
-                            driver.SwitchTo().Window(driver.WindowHandles[driver.WindowHandles.Count - 1]);
-
                             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
                             string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
 
