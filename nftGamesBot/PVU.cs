@@ -19,7 +19,7 @@ namespace nftGamesBot
         private StringBuilder verificationErrors;
         private bool acceptNextAlert = true;
         public Dictionary<string, double> Conditions { get; set; }
-        public const double fatorCorrecao = 0.99;
+        public const double fatorCorrecao = 1;
 
         [SetUp]
         public void SetupTest()
