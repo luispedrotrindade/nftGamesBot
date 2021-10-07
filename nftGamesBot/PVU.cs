@@ -19,7 +19,8 @@ namespace nftGamesBot
         private StringBuilder verificationErrors;
         private bool acceptNextAlert = true;
         public Dictionary<string, double> Conditions { get; set; }
-        public const double fatorCorrecao = 1;
+        public const double fatorCorrecao = 0.98;
+        public const string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?elements=water,metal,ice,fire,wind,electro&sort=latest&rarities=0";
 
         [SetUp]
         public void SetupTest()
@@ -27,13 +28,13 @@ namespace nftGamesBot
         {
             Conditions = new Dictionary<string, double>();
 
-            //Light
-            Conditions.Add("21_1.png", 12.5);
-            Conditions.Add("19_1.png", 12.5);
-            Conditions.Add("20_1.png", 12.5);
+            ////Light
+            //Conditions.Add("21_1.png", 12.5);
+            //Conditions.Add("19_1.png", 12.5);
+            //Conditions.Add("20_1.png", 12.5);
 
 
-            //water
+            //Water
             Conditions.Add("36_1.png", 17.5);
             Conditions.Add("4_1.png", 17.5);
             Conditions.Add("5_1.png", 17.5);
@@ -54,32 +55,32 @@ namespace nftGamesBot
             Conditions.Add("9_1.png", 24);
 
 
-            //Dark
-            Conditions.Add("14_1.png", 15);
-            Conditions.Add("31_1.png", 15);
-            Conditions.Add("33_1.png", 15);
-            Conditions.Add("35_1.png", 15);
+            ////Dark
+            //Conditions.Add("14_1.png", 15);
+            //Conditions.Add("31_1.png", 15);
+            //Conditions.Add("33_1.png", 15);
+            //Conditions.Add("35_1.png", 15);
 
 
-            //Parasit
-            Conditions.Add("11_1.png", 15);
-            Conditions.Add("12_1.png", 15);
-            Conditions.Add("22_1.png", 15);
-            Conditions.Add("23_1.png", 15);
-            Conditions.Add("24_1.png", 15);
+            ////Parasit
+            //Conditions.Add("11_1.png", 15);
+            //Conditions.Add("12_1.png", 15);
+            //Conditions.Add("22_1.png", 15);
+            //Conditions.Add("23_1.png", 15);
+            //Conditions.Add("24_1.png", 15);
 
 
             //Ice
-            Conditions.Add("29_1.png", 20);
-            Conditions.Add("2_1.png", 21);
-            Conditions.Add("6_1.png", 22);
+            Conditions.Add("29_1.png", 19);
+            Conditions.Add("2_1.png", 20);
+            Conditions.Add("6_1.png", 21);
 
 
             //Metal
-            Conditions.Add("27_1.png", 15.8);
-            Conditions.Add("26_1.png", 15.8);
-            Conditions.Add("28_1.png", 15.8);
-            Conditions.Add("25_1.png", 15.8);
+            Conditions.Add("27_1.png", 16);
+            Conditions.Add("26_1.png", 16);
+            Conditions.Add("28_1.png", 16);
+            Conditions.Add("25_1.png", 16);
 
             //Eletric
             Conditions.Add("3_1.png", 28);
@@ -121,8 +122,8 @@ namespace nftGamesBot
             {
                 try
                 {
-                    driver.Navigate().GoToUrl("https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&rarities=0");
-                    Thread.Sleep(2000);
+                    driver.Navigate().GoToUrl(mainUrl);
+                    Thread.Sleep(1000);
 
                     var uls = driver.FindElements(By.TagName("ul"));
                     var lis = uls[3].FindElements(By.CssSelector(".tw-h-80.tw-rounded-lg.tw-bg-black.tw-bg-opacity-10.tw-border.tw-border-gray-900"));
@@ -139,6 +140,11 @@ namespace nftGamesBot
                         var divPreco = twml4.FindElement(By.TagName("div"));
                         var preco = Convert.ToDouble(divPreco.FindElement(By.TagName("p")).Text.Replace(".", ","));
 
+                        if(listIds.Count >= 15)
+                        {
+                            listIds.RemoveRange(0, 5);
+                        }
+
                         if (GetCondition(image.GetAttribute("src"), preco) && !listIds.Contains(id))
                         {
                             listIds.Add(id);
@@ -147,14 +153,14 @@ namespace nftGamesBot
 
                             driver.Navigate().GoToUrl(url);
 
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
 
                             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
                             string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
 
                             Thread.Sleep(10000);
 
-                            driver.Navigate().GoToUrl("https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&rarities=0&elements=light");
+                            driver.Navigate().GoToUrl(mainUrl);
                         }
                     }
                 }
