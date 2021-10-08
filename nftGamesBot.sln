@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nftGamesBot", "nftGamesBot\nftGamesBot.csproj", "{051876A3-8ABE-4461-9A42-F4F05ECD0851}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nftGamesBot", "nftGamesBot\nftGamesBot.csproj", "{5E7B5996-E004-4929-8638-9796ED93E9EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nftGamesConsole", "nftGamesConsole\nftGamesConsole.csproj", "{862385EB-D063-48E8-B399-1EDF3F73500E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nftGamesConsole", "nftGamesConsole\nftGamesConsole.csproj", "{D658748E-4DA3-4DBE-8ABE-37DC8AC219D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{051876A3-8ABE-4461-9A42-F4F05ECD0851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{051876A3-8ABE-4461-9A42-F4F05ECD0851}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{051876A3-8ABE-4461-9A42-F4F05ECD0851}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{051876A3-8ABE-4461-9A42-F4F05ECD0851}.Release|Any CPU.Build.0 = Release|Any CPU
-		{862385EB-D063-48E8-B399-1EDF3F73500E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{862385EB-D063-48E8-B399-1EDF3F73500E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{862385EB-D063-48E8-B399-1EDF3F73500E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{862385EB-D063-48E8-B399-1EDF3F73500E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E7B5996-E004-4929-8638-9796ED93E9EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E7B5996-E004-4929-8638-9796ED93E9EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E7B5996-E004-4929-8638-9796ED93E9EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E7B5996-E004-4929-8638-9796ED93E9EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D658748E-4DA3-4DBE-8ABE-37DC8AC219D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D658748E-4DA3-4DBE-8ABE-37DC8AC219D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D658748E-4DA3-4DBE-8ABE-37DC8AC219D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D658748E-4DA3-4DBE-8ABE-37DC8AC219D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

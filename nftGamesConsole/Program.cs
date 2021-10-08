@@ -1,5 +1,7 @@
 ﻿using nftGamesBot;
+using nftGamesBot.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace nftGamesConsole
@@ -9,22 +11,7 @@ namespace nftGamesConsole
         static void Main(string[] args)
         {
             PVU teste = new PVU();
-
             teste.SetupTest();
-
-
-            teste.TheUntitledTestCaseTest();
-
-            //while (true)
-            //{
-            //    try
-            //    {
-            //        teste.TheUntitledTestCaseTest();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //    }
-            //}
         }
     }
 }

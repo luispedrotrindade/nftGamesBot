@@ -1,11 +1,13 @@
-F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\testhost.exe
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\testhost.dll
+F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\testhost.exe
+F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.PlatformAbstractions.dll
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\NUnit3.TestAdapter.dll
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\NUnit3.TestAdapter.pdb
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\nunit.engine.dll
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\nunit.engine.api.dll
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\nunit.engine.core.dll
-F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.PlatformAbstractions.dll
+F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\chromedriver.exe
+F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\MarketBuySearch.cs
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\nftGamesBot.deps.json
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\nftGamesBot.runtimeconfig.json
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\nftGamesBot.runtimeconfig.dev.json
@@ -90,7 +92,6 @@ F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\zh-Hans\Microsoft.Vi
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll
 F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll
-F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.csproj.AssemblyReference.cache
 F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.GeneratedMSBuildEditorConfig.editorconfig
 F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.AssemblyInfoInputs.cache
 F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.AssemblyInfo.cs
@@ -99,5 +100,4 @@ F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.csproj.C
 F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.dll
 F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.pdb
 F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.genruntimeconfig.cache
-F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\MarketBuySearch.cs
-F:\Projetos\nftGamesBot\nftGamesBot\bin\Debug\netcoreapp3.1\chromedriver.exe
+F:\Projetos\nftGamesBot\nftGamesBot\obj\Debug\netcoreapp3.1\nftGamesBot.csproj.AssemblyReference.cache
