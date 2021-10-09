@@ -174,7 +174,7 @@ namespace nftGamesBot
                                 {
                                     IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
                                     string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
-                                    Thread.Sleep(1000);
+                                    Thread.Sleep(10000);
                                     success = true;
                                     MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
                                     SetupTest();
@@ -192,6 +192,7 @@ namespace nftGamesBot
                     if (i++ >= 100)
                     {
                         i = 0;
+                        GetMinhasPlantas();
                         GetCotacao();
                     }
                 }
@@ -261,7 +262,7 @@ namespace nftGamesBot
                     }
                     foreach (var plantaVendida in PlantasVendidas)
                     {
-                        if (plantaVendida.Value.Count >= 10)
+                        if (plantaVendida.Value.Count >= 5)
                             Conditions.Add(plantaVendida.Key, plantaVendida.Value.Average(x => x.Preco));
                     }
                 }
