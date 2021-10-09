@@ -8,5 +8,6 @@ namespace nftGamesBot.Models
     {
         public string Id { get; set; }
         public double Preco { get; set; }
+        public string Buyer { get; set; }
     }
 }
