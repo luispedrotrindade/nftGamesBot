@@ -1,3 +1,8 @@
+F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\chromedriver.exe
+F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.GeneratedMSBuildEditorConfig.editorconfig
+F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.AssemblyInfoInputs.cache
+F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.AssemblyInfo.cs
+F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.csproj.CoreCompileInputs.cache
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\testhost.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesBot.deps.json
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesBot.runtimeconfig.json
@@ -10,13 +15,7 @@ F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nunit.engine.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nunit.engine.api.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nunit.engine.core.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.exe
-F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\chromedriver.exe
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\MarketBuySearch.cs
-F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.deps.json
-F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.runtimeconfig.json
-F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.runtimeconfig.dev.json
-F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.dll
-F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.pdb
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\Microsoft.DotNet.InternalAbstractions.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\Microsoft.TestPlatform.CoreUtilities.dll
@@ -99,11 +98,6 @@ F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\zh-Hant\Microsof
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesBot.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesBot.pdb
 F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.csproj.AssemblyReference.cache
-F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.GeneratedMSBuildEditorConfig.editorconfig
-F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.AssemblyInfoInputs.cache
-F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.AssemblyInfo.cs
-F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.csproj.CoreCompileInputs.cache
 F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.csproj.CopyComplete
 F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.pdb
-F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.genruntimeconfig.cache
