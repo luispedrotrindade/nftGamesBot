@@ -20,10 +20,10 @@ namespace nftGamesBot
         private IWebDriver driver;
         private StringBuilder verificationErrors;
         private bool acceptNextAlert = true;
-        private double percentualVenda = 1.10;
+        private double percentualVenda = 1.08;
         private double percentualAnomalia = 0.2;
-        public const double fatorCorrecao = 0.90;
-        public bool buyMotherThree = true;
+        public double fatorCorrecao = 0.92;
+        public bool buyMotherThree = false;
         public string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,parasit,wind,water,ice";
         public Dictionary<string, List<Planta>> PlantasVendidas { get; set; }
         List<Planta> MinhasPlantas { get; set; }
@@ -109,29 +109,38 @@ namespace nftGamesBot
 
                         if (GetCondition(image.GetAttribute("src"), preco) && !listIds.Contains(id))
                         {
-                            listIds.Add(id);
+                            var result = false;
+                            while (!result)
+                            {
+                                try
+                                {
+                                    listIds.Add(id);
 
-                            url = a.GetAttribute("href");
+                                    url = a.GetAttribute("href");
 
-                            driver.Navigate().GoToUrl(url);
+                                    driver.Navigate().GoToUrl(url);
 
-                            Thread.Sleep(3000);
+                                    js = (IJavaScriptExecutor)driver;
+                                    string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
+                                    Thread.Sleep(2000);
+                                    MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
+                                    result = true;
+                                    driver.Navigate().GoToUrl(mainUrl);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
+                            }
+                        }
 
-                            js = (IJavaScriptExecutor)driver;
-                            string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
-                            Thread.Sleep(2000);
-                            MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
-                            driver.Navigate().GoToUrl(mainUrl);
+                        if (i++ >= 500)
+                        {
+                            i = 0;
+                            GetMinhasPlantas();
+                            GetCotacao();
                         }
                     }
-
-                    if (i++ >= 500)
-                    {
-                        i = 0;
-                        GetMinhasPlantas();
-                        GetCotacao();
-                    }
-                }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
@@ -216,7 +225,7 @@ namespace nftGamesBot
                         {
                             plantaVendida.Value.RemoveAll(x =>
                                     x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
-                                ||  x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
+                                || x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
                             );
                         }
 
