@@ -23,8 +23,9 @@ namespace nftGamesBot
         private double percentualVenda = 1.10;
         private double percentualAnomalia = 1.20;
         public const double fatorCorrecao = 0.90;
+        public bool buyMotherThree = true;
         public const string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,parasit,wind,water,ice";
-        public Dictionary<string, List<Planta>> PlantasVendidas { get; set; } 
+        public Dictionary<string, List<Planta>> PlantasVendidas { get; set; }
         List<Planta> MinhasPlantas { get; set; }
         public Dictionary<string, double> Conditions { get; set; }
 
@@ -47,7 +48,7 @@ namespace nftGamesBot
 
             GetCotacao();
 
-            TheUntitledTestCaseTest();
+            BuscarPlantas();
         }
 
         [TearDown]
@@ -65,7 +66,7 @@ namespace nftGamesBot
         }
 
         [Test]
-        public void TheUntitledTestCaseTest()
+        public void BuscarPlantas()
         {
             var url = "";
 
@@ -75,8 +76,17 @@ namespace nftGamesBot
             {
                 try
                 {
+                    IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
                     driver.Navigate().GoToUrl(mainUrl);
                     Thread.Sleep(2000);
+
+                    if (buyMotherThree)
+                    {
+                        string title = (string)js.ExecuteScript("document.getElementsByTagName('img')[19].click();");
+
+                        Thread.Sleep(2000);
+                    }
 
                     var uls = driver.FindElements(By.TagName("ul"));
                     var lis = uls[3].FindElements(By.CssSelector(".tw-h-80.tw-rounded-lg.tw-bg-black.tw-bg-opacity-10.tw-border.tw-border-gray-900"));
@@ -113,7 +123,7 @@ namespace nftGamesBot
 
                             Thread.Sleep(3000);
 
-                            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                            js = (IJavaScriptExecutor)driver;
                             string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
                             Thread.Sleep(2000);
                             MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
@@ -139,10 +149,19 @@ namespace nftGamesBot
         {
             PlantasVendidas.Clear();
             Conditions.Clear();
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
             string url = "https://marketplace.plantvsundead.com/offering/bundle#/";
-
             driver.Navigate().GoToUrl(url);
+
+            Thread.Sleep(2000);
+
+            if (buyMotherThree)
+            {
+                js.ExecuteScript("document.getElementsByTagName('img')[86].click();");
+                Thread.Sleep(2000);
+            }
+
             while (Conditions.Count <= 0)
             {
                 try
@@ -152,7 +171,14 @@ namespace nftGamesBot
                     for (int i = 0; i < 199; i++)
                     {
                         var uls = driver.FindElements(By.TagName("ul"));
-                        var lis = uls[4].FindElements(By.TagName("li"));
+                        var ulIndex = 0;
+
+                        if (buyMotherThree)
+                            ulIndex = 5;
+                        else
+                            ulIndex = 4;
+
+                        var lis = uls[ulIndex].FindElements(By.TagName("li"));
 
                         foreach (var li in lis)
                         {
@@ -162,7 +188,7 @@ namespace nftGamesBot
                             var divImagem = divs[0];
                             var image = divImagem.FindElement(By.CssSelector("img"));
                             var id = image.GetAttribute("src");
-                            id = id.Substring(id.IndexOf("/plant/") + 7, (id.Length - 7) - id.IndexOf("/plant/")).Replace(".png", "").Replace(".jpg", "");
+                            id = id.Substring(id.IndexOf("/plant/") + 7, (id.Length - 7) - id.IndexOf("/plant/")).Replace(".png", "").Replace(".jpg", "").Trim().ToUpper();
                             var divPreco = divs[2];
                             var p = divPreco.FindElement(By.TagName("p"));
                             var preco = Convert.ToDouble(p.GetAttribute("innerHTML").Replace(".", ","));
@@ -191,8 +217,12 @@ namespace nftGamesBot
                             }
                         }
 
-                        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                        js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[1].click();");
+                        js = (IJavaScriptExecutor)driver;
+                        if (buyMotherThree)
+                            js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[3].click();");
+                        else
+                            js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[1].click();");
+
                         Thread.Sleep(2000);
                     }
                     foreach (var plantaVendida in PlantasVendidas)
@@ -233,8 +263,21 @@ namespace nftGamesBot
                 try
                 {
                     IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                    js.ExecuteScript("document.getElementsByTagName('img')[20].click();");
-                    js.ExecuteScript("document.getElementsByTagName('img')[21].click();");
+
+
+                    if (buyMotherThree)
+                    {
+                        js.ExecuteScript("document.getElementsByTagName('img')[20].click();");
+                        js.ExecuteScript("document.getElementsByTagName('img')[23].click();");
+                    }
+                    else
+                    {
+                        js.ExecuteScript("document.getElementsByTagName('img')[20].click();");
+                        js.ExecuteScript("document.getElementsByTagName('img')[21].click();");
+                    }
+
+
+
 
                     Thread.Sleep(3000);
 
