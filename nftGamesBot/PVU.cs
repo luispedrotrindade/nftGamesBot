@@ -20,11 +20,11 @@ namespace nftGamesBot
         private IWebDriver driver;
         private StringBuilder verificationErrors;
         private bool acceptNextAlert = true;
-        private double percentualVenda = 1.05;
-        private double percentualAnomalia = 1.3;
-        public const double fatorCorrecao = 0.85;
-        public const string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest";
-        public Dictionary<string, List<Planta>> PlantasVendidas { get; set; }
+        private double percentualVenda = 1.10;
+        private double percentualAnomalia = 1.20;
+        public const double fatorCorrecao = 0.90;
+        public const string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,parasit,wind,water,ice";
+        public Dictionary<string, List<Planta>> PlantasVendidas { get; set; } 
         List<Planta> MinhasPlantas { get; set; }
         public Dictionary<string, double> Conditions { get; set; }
 
@@ -121,7 +121,7 @@ namespace nftGamesBot
                         }
                     }
 
-                    if (i++ >= 100)
+                    if (i++ >= 500)
                     {
                         i = 0;
                         GetMinhasPlantas();
@@ -149,7 +149,7 @@ namespace nftGamesBot
                 {
                     Thread.Sleep(1000);
 
-                    for (int i = 0; i < 49; i++)
+                    for (int i = 0; i < 199; i++)
                     {
                         var uls = driver.FindElements(By.TagName("ul"));
                         var lis = uls[4].FindElements(By.TagName("li"));
@@ -182,7 +182,7 @@ namespace nftGamesBot
                                     }
                                     if (planta.Value.Count > 0)
                                     {
-                                        if (preco < (planta.Value.Average(x => x.Preco) * 1.3))
+                                        if (preco < (planta.Value.Average(x => x.Preco) * percentualAnomalia))
                                             planta.Value.Add(new Planta { Id = id, Preco = preco, Buyer = buyer });
                                     }
                                     else
@@ -193,11 +193,11 @@ namespace nftGamesBot
 
                         IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
                         js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[1].click();");
-                        Thread.Sleep(1000);
+                        Thread.Sleep(2000);
                     }
                     foreach (var plantaVendida in PlantasVendidas)
                     {
-                        if (plantaVendida.Value.Count >= 5)
+                        if (plantaVendida.Value.Count >= 10)
                             Conditions.Add(plantaVendida.Key, plantaVendida.Value.Average(x => x.Preco));
                     }
                 }
