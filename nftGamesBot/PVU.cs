@@ -141,6 +141,7 @@ namespace nftGamesBot
                             GetCotacao();
                         }
                     }
+                }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
@@ -235,7 +236,7 @@ namespace nftGamesBot
                         else
                             js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[1].click();");
 
-                        Thread.Sleep(2000);
+                        Thread.Sleep(1000);
                     }
                     foreach (var plantaVendida in PlantasVendidas)
                     {
