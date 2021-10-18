@@ -101,3 +101,9 @@ F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.
 F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.csproj.CopyComplete
 F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.dll
 F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.pdb
+F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.deps.json
+F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.runtimeconfig.json
+F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.runtimeconfig.dev.json
+F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.dll
+F:\Projetos\nftGamesBot\nftGamesConsole\bin\Debug\netcoreapp3.1\nftGamesConsole.pdb
+F:\Projetos\nftGamesBot\nftGamesConsole\obj\Debug\netcoreapp3.1\nftGamesConsole.genruntimeconfig.cache
