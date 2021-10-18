@@ -227,7 +227,9 @@ namespace nftGamesBot
                     }
                     foreach (var plantaVendida in PlantasVendidas)
                     {
-                        if (plantaVendida.Value.Count >= 10)
+                        var minimoPlantasVendidas = buyMotherThree ? 10 : 5;
+
+                        if (plantaVendida.Value.Count >= minimoPlantasVendidas)
                             Conditions.Add(plantaVendida.Key, plantaVendida.Value.Average(x => x.Preco));
                     }
                 }
