@@ -11,7 +11,7 @@ namespace nftGamesConsole
         static void Main(string[] args)
         {
             PVU teste = new PVU();
-            teste.SetupTest();
+            teste.Setup();
         }
     }
 }

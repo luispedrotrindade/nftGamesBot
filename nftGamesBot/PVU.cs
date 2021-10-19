@@ -18,53 +18,40 @@ namespace nftGamesBot
     public class PVU
     {
         private IWebDriver driver;
-        private StringBuilder verificationErrors;
+        public bool comprarMotherThree = false; 
+        int minimoPlantasVendidas = 5;
+        int minimoCondicoes = 60;
         private bool acceptNextAlert = true;
-        private double percentualVenda = 1.08;
-        private double percentualAnomalia = 0.2;
-        public double fatorCorrecao = 0.92;
-        public bool buyMotherThree = false;
-        public string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,parasit,wind,water,ice";
+        private double percentualVenda = 0.98;
+        private double percentualAnomalia = 0.1;
+        public double fatorCorrecao = 0.9;
+        int tempoEsperaInicial = 600;
+        int tempoEspera = 600;
+        List<string> listIdPlantasPassadas = new List<string>();
+        public string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,wind,water,ice,parasite,dark&rarities=1,2";
         public Dictionary<string, List<Planta>> PlantasVendidas { get; set; }
         List<Planta> MinhasPlantas { get; set; }
-        public Dictionary<string, double> Conditions { get; set; }
+        public Dictionary<string, double> Condicoes { get; set; }
 
         [SetUp]
-        public void SetupTest()
+        public void Setup()
         {
-            if (buyMotherThree)
+            if (comprarMotherThree)
+            {
                 mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/mother-tree?sort=latest";
+                minimoPlantasVendidas = 5;
+            }
 
             PlantasVendidas = new Dictionary<string, List<Planta>>();
             MinhasPlantas = new List<Planta>();
-            Conditions = new Dictionary<string, double>();
-
-
+            Condicoes = new Dictionary<string, double>();
             ChromeOptions opt = new ChromeOptions();
             opt.DebuggerAddress = "127.0.0.1:9222";
 
             driver = new ChromeDriver(@$"{Environment.CurrentDirectory}", opt);
-            verificationErrors = new StringBuilder();
-
-            GetMinhasPlantas();
 
             GetCotacao();
-
             BuscarPlantas();
-        }
-
-        [TearDown]
-        public void TeardownTest()
-        {
-            try
-            {
-                driver.Quit();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            Assert.AreEqual("", verificationErrors.ToString());
         }
 
         [Test]
@@ -72,75 +59,73 @@ namespace nftGamesBot
         {
             var url = "";
 
-            List<string> listIds = new List<string>();
             int i = 0;
+            tempoEspera = tempoEsperaInicial;
+
             while (true)
             {
                 try
                 {
                     driver.Navigate().GoToUrl(mainUrl);
-                    Thread.Sleep(2000);
-                    IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-
-                    var uls = driver.FindElements(By.TagName("ul"));
-                    var lis = uls[3].FindElements(By.CssSelector(".tw-h-80.tw-rounded-lg.tw-bg-black.tw-bg-opacity-10.tw-border.tw-border-gray-900"));
-
-
-                    foreach (var li in lis)
-                    {
-                        var a = li.FindElement(By.TagName("a"));
-                        var id = li.FindElement(By.ClassName("id")).Text;
-                        var div = a.FindElement(By.CssSelector(".tw-flex.tw-justify-center"));
-                        var image = div.FindElement(By.CssSelector("img"));
-                        var rodape = a.FindElement(By.CssSelector(".tw-flex.tw-justify-between.tw-items-end"));
-                        var twml4 = rodape.FindElement(By.CssSelector(".tw-ml-4"));
-                        var divPreco = twml4.FindElement(By.TagName("div"));
-                        var preco = Convert.ToDouble(divPreco.FindElement(By.TagName("p")).Text.Replace(".", ","));
-
-                        if (listIds.Count >= 15)
+                    Thread.Sleep(tempoEspera);
+                    var mainResult = false;
+                    while (!mainResult)
+                        try
                         {
-                            listIds.RemoveRange(0, 5);
-                        }
+                            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
-                        if (MinhasPlantas.Count >= 15)
-                        {
-                            MinhasPlantas.RemoveRange(0, 5);
-                        }
+                            var uls = driver.FindElements(By.TagName("ul"));
+                            var lis = uls[3].FindElements(By.CssSelector(".tw-h-80.tw-rounded-lg.tw-bg-black.tw-bg-opacity-10.tw-border.tw-border-gray-900"));
 
-                        if (GetCondition(image.GetAttribute("src"), preco) && !listIds.Contains(id))
-                        {
-                            var result = false;
-                            while (!result)
+                            foreach (var li in lis)
                             {
-                                try
-                                {
-                                    listIds.Add(id);
+                                var result = false;
 
+                                while (!result)
+                                {
+                                    var a = li.FindElement(By.TagName("a"));
+                                    var id = li.FindElement(By.ClassName("id")).Text;
+                                    var div = a.FindElement(By.CssSelector(".tw-flex.tw-justify-center"));
+                                    var image = div.FindElement(By.CssSelector("img"));
                                     url = a.GetAttribute("href");
+                                    var rodape = a.FindElement(By.CssSelector(".tw-flex.tw-justify-between.tw-items-end"));
+                                    var twml4 = rodape.FindElement(By.CssSelector(".tw-ml-4"));
+                                    var divPreco = twml4.FindElement(By.TagName("div"));
+                                    var preco = Convert.ToDouble(divPreco.FindElement(By.TagName("p")).Text.Replace(".", ","));
 
-                                    driver.Navigate().GoToUrl(url);
+                                    if (listIdPlantasPassadas.Count >= 15)
+                                    {
+                                        listIdPlantasPassadas.RemoveRange(0, 5);
+                                    }
 
-                                    js = (IJavaScriptExecutor)driver;
-                                    string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
-                                    Thread.Sleep(2000);
-                                    MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
+                                    if (MinhasPlantas.Count >= 15)
+                                    {
+                                        MinhasPlantas.RemoveRange(0, 5);
+                                    }
+
+                                    if (GetCondicao(image.GetAttribute("src"), preco) && !listIdPlantasPassadas.Contains(id))
+                                    {
+                                        ComprarPlanta(id, preco, url);
+                                        GetMinhasPlantas();
+                                    }
+
+                                    if (i++ >= 999)
+                                    {
+                                        i = 0;
+                                        GetCotacao();
+                                    }
                                     result = true;
-                                    driver.Navigate().GoToUrl(mainUrl);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
                                 }
                             }
+                            mainResult = true;
                         }
-
-                        if (i++ >= 500)
+                        catch (Exception ex)
                         {
-                            i = 0;
-                            GetMinhasPlantas();
-                            GetCotacao();
+                            tempoEspera += 100;
+                            driver.Navigate().GoToUrl(mainUrl);
+                            Thread.Sleep(tempoEspera);
+                            Console.WriteLine(ex.Message);
                         }
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -152,7 +137,7 @@ namespace nftGamesBot
         public void GetCotacao()
         {
             PlantasVendidas.Clear();
-            Conditions.Clear();
+            Condicoes.Clear();
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
             string url = "https://marketplace.plantvsundead.com/offering/bundle#/";
@@ -160,91 +145,112 @@ namespace nftGamesBot
 
             Thread.Sleep(2000);
 
-            if (buyMotherThree)
+            if (comprarMotherThree)
             {
                 js.ExecuteScript("document.getElementsByTagName('img')[86].click();");
                 Thread.Sleep(2000);
             }
 
-            while (Conditions.Count <= 0)
+            while (Condicoes.Count <= minimoCondicoes)
             {
                 try
                 {
                     Thread.Sleep(1000);
 
-                    for (int i = 0; i < 199; i++)
+                    var uls = driver.FindElements(By.TagName("ul"));
+                    var ulIndex = 0;
+
+                    if (comprarMotherThree)
+                        ulIndex = 5;
+                    else
+                        ulIndex = 4;
+
+                    var lis = uls[ulIndex].FindElements(By.TagName("li"));
+
+                    foreach (var li in lis)
                     {
-                        var uls = driver.FindElements(By.TagName("ul"));
-                        var ulIndex = 0;
+                        var a = li.FindElement(By.TagName("a"));
+                        var divs = a.FindElements(By.TagName("div"));
+                        var buyer = a.FindElement(By.ClassName("username")).GetAttribute("innerHTML");
+                        var divImagem = divs[0];
+                        var image = divImagem.FindElement(By.CssSelector("img"));
+                        var id = image.GetAttribute("src");
+                        id = id.Substring(id.IndexOf("/plant/") + 7, (id.Length - 7) - id.IndexOf("/plant/")).Replace(".png", "").Replace(".jpg", "").Trim().ToUpper();
+                        var divPreco = divs[2];
+                        var p = divPreco.FindElement(By.TagName("p"));
+                        var preco = Convert.ToDouble(p.GetAttribute("innerHTML").Replace(".", ","));
 
-                        if (buyMotherThree)
-                            ulIndex = 5;
+                        if (!PlantasVendidas.Any(x => x.Key == id))
+                            PlantasVendidas.Add(id, new List<Planta> { new Planta { Id = id, Preco = preco, Buyer = buyer } });
                         else
-                            ulIndex = 4;
-
-                        var lis = uls[ulIndex].FindElements(By.TagName("li"));
-
-                        foreach (var li in lis)
                         {
-                            var a = li.FindElement(By.TagName("a"));
-                            var divs = a.FindElements(By.TagName("div"));
-                            var buyer = a.FindElement(By.ClassName("username")).GetAttribute("innerHTML");
-                            var divImagem = divs[0];
-                            var image = divImagem.FindElement(By.CssSelector("img"));
-                            var id = image.GetAttribute("src");
-                            id = id.Substring(id.IndexOf("/plant/") + 7, (id.Length - 7) - id.IndexOf("/plant/")).Replace(".png", "").Replace(".jpg", "").Trim().ToUpper();
-                            var divPreco = divs[2];
-                            var p = divPreco.FindElement(By.TagName("p"));
-                            var preco = Convert.ToDouble(p.GetAttribute("innerHTML").Replace(".", ","));
-
-                            if (!PlantasVendidas.Any(x => x.Key == id))
-                                PlantasVendidas.Add(id, new List<Planta> { new Planta { Id = id, Preco = preco, Buyer = buyer } });
-                            else
+                            var planta = PlantasVendidas.FirstOrDefault(x => x.Key == id);
+                            if (!planta.Value.Any(x => x.Buyer == buyer))
                             {
-                                var planta = PlantasVendidas.FirstOrDefault(x => x.Key == id);
-                                if (!planta.Value.Any(x => x.Buyer == buyer))
-                                {
-                                    planta.Value.Add(new Planta { Id = id, Buyer = buyer, Preco = preco });
-                                    //var result = planta.Value.Average(x => x.Preco) > preco * percentualAnomalia;
-                                    //while (result)
-                                    //{
-                                    //    planta.Value.RemoveAll(x => x.Preco == planta.Value.Max(x => x.Preco));
-                                    //    result = planta.Value.Count > 0 ? planta.Value.Average(x => x.Preco) > preco * percentualAnomalia : false;
-                                    //}
-                                    //if (planta.Value.Count > 0)
-                                    //{
-                                    //    if (preco < (planta.Value.Average(x => x.Preco) * percentualAnomalia))
-                                    //        planta.Value.Add(new Planta { Id = id, Preco = preco, Buyer = buyer });
-                                    //}
-                                    //else
-                                    //    planta.Value.Add(new Planta { Id = id, Preco = preco, Buyer = buyer });
-                                }
+                                planta.Value.Add(new Planta { Id = id, Buyer = buyer, Preco = preco });
+                                //var result = planta.Value.Average(x => x.Preco) > preco * percentualAnomalia;
+                                //while (result)
+                                //{
+                                //    planta.Value.RemoveAll(x => x.Preco == planta.Value.Max(x => x.Preco));
+                                //    result = planta.Value.Count > 0 ? planta.Value.Average(x => x.Preco) > preco * percentualAnomalia : false;
+                                //}
+                                //if (planta.Value.Count > 0)
+                                //{
+                                //    if (preco < (planta.Value.Average(x => x.Preco) * percentualAnomalia))
+                                //        planta.Value.Add(new Planta { Id = id, Preco = preco, Buyer = buyer });
+                                //}
+                                //else
+                                //    planta.Value.Add(new Planta { Id = id, Preco = preco, Buyer = buyer });
                             }
                         }
-
-                        foreach (var plantaVendida in PlantasVendidas)
-                        {
-                            plantaVendida.Value.RemoveAll(x =>
-                                    x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
-                                || x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
-                            );
-                        }
-
-                        js = (IJavaScriptExecutor)driver;
-                        if (buyMotherThree)
-                            js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[3].click();");
-                        else
-                            js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[1].click();");
-
-                        Thread.Sleep(1000);
                     }
+
                     foreach (var plantaVendida in PlantasVendidas)
                     {
-                        var minimoPlantasVendidas = buyMotherThree ? 5 : 10;
-
                         if (plantaVendida.Value.Count >= minimoPlantasVendidas)
-                            Conditions.Add(plantaVendida.Key, plantaVendida.Value.Average(x => x.Preco));
+
+                            while (plantaVendida.Value.Any(x => x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
+                                                             //|| x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
+                                                                ))
+                            {
+                                plantaVendida.Value.RemoveAll(x =>
+                                                                       x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
+                                                                    //|| x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
+                                );
+                            }
                     }
+
+                    js = (IJavaScriptExecutor)driver;
+                    if (comprarMotherThree)
+                        js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[3].click();");
+                    else
+                        js.ExecuteScript("document.getElementsByClassName('box tw-cursor-pointer')[1].click();");
+
+
+                    var total = 0;
+                    foreach (var planta in PlantasVendidas)
+                    {
+                        total += planta.Value.Count;
+                    }
+
+                    Thread.Sleep(1000);
+
+                    foreach (var plantaVendida in PlantasVendidas)
+                    {
+                        if (plantaVendida.Value.Count >= minimoPlantasVendidas)
+                        {
+                            if (!Condicoes.Any(x => x.Key == plantaVendida.Key))
+                                Condicoes.Add(plantaVendida.Key, plantaVendida.Value.Average(x => x.Preco));
+                        }
+                    }
+
+                    var conditionsLoading = "";
+
+                    for (int i = 0; i <= Condicoes.Count; i++)
+                        conditionsLoading += "=";
+                    conditionsLoading += $"> {Condicoes.Count}/{minimoCondicoes} Condicoes";
+                    Console.Clear();
+                    Console.WriteLine(conditionsLoading);
                 }
                 catch (Exception ex)
                 {
@@ -254,12 +260,12 @@ namespace nftGamesBot
             }
         }
 
-        private bool GetCondition(string src, double price)
+        private bool GetCondicao(string src, double price)
         {
-            if (Conditions.Count == 0)
+            if (Condicoes.Count == 0)
                 GetCotacao();
 
-            return Conditions.Any(x => src.IndexOf($"/{x.Key}") > -1 && price <= ((x.Value * fatorCorrecao)));
+            return Condicoes.Any(x => src.IndexOf($"/{x.Key}") > -1 && price <= ((x.Value * fatorCorrecao)));
         }
 
         public void GetMinhasPlantas()
@@ -269,18 +275,18 @@ namespace nftGamesBot
             while (!result)
             {
                 string id = null;
+                string classe = null;
                 var url = "https://marketplace.plantvsundead.com/farm#/profile/inventory";
                 driver.Navigate().GoToUrl(url);
 
                 Thread.Sleep(3000);
-
 
                 try
                 {
                     IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
 
-                    if (buyMotherThree)
+                    if (comprarMotherThree)
                     {
                         js.ExecuteScript("document.getElementsByTagName('img')[20].click();");
                         js.ExecuteScript("document.getElementsByTagName('img')[23].click();");
@@ -304,24 +310,25 @@ namespace nftGamesBot
                     foreach (var div in div3)
                     {
                         id = div.FindElement(By.CssSelector(".id")).GetAttribute("innerHTML");
+                        var divImage = div.FindElement(By.ClassName("tw-justify-center"));
+                        var imgSrc = divImage.FindElement(By.TagName("img")).GetAttribute("src").Split("/");
+                        classe = imgSrc[imgSrc.Count() - 1].Replace(".jpg", "").Replace(".png", "");
                         var forSale = div.FindElement(By.CssSelector(".forSale")).GetAttribute("innerHTML").ToUpper().Trim();
                         //!= null ? div.FindElement(By.CssSelector(".forSale")).GetAttribute("innerHTML").ToUpper() : null;
 
                         if (forSale != "FARMING" && forSale != "FOR SALE")
                         {
-                            VenderPlanta(id);
+                            VenderPlanta(id, classe);
                         }
                     }
+                    BuscarPlantas();
                 }
                 catch (Exception ex)
                 {
                     if (ex.Message.IndexOf("Unable to locate element") > -1 && ex.Message.IndexOf(".forSale") > -1)
                     {
-                        if (MinhasPlantas.Any(x => x.Id == id))
-                        {
-                            VenderPlanta(id);
-                            Thread.Sleep(5000);
-                        }
+                        VenderPlanta(id, classe);
+                        Thread.Sleep(5000);
                     }
 
                     Console.WriteLine(ex.Message);
@@ -331,79 +338,46 @@ namespace nftGamesBot
             }
         }
 
-        private void VenderPlanta(string id)
+        private void ComprarPlanta(string id, double preco, string url)
         {
-            var planta = MinhasPlantas.FirstOrDefault(x => x.Id == id);
-            if (planta != null)
+            listIdPlantasPassadas.Add(id);
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+            driver.Navigate().GoToUrl(url);
+            Thread.Sleep(tempoEspera);
+
+            js = (IJavaScriptExecutor)driver;
+            string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
+            Thread.Sleep(tempoEspera);
+            MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
+        }
+
+        private void VenderPlanta(string id, string classe)
+        {
+            //var planta = MinhasPlantas.FirstOrDefault(x => x.Id == id);
+            //if (planta != null)
+            //{
+            driver.Navigate().GoToUrl($"https://marketplace.plantvsundead.com/farm#/plant/{id}");
+            Thread.Sleep(tempoEspera);
+
+            var btnSell = driver.FindElement(By.CssSelector(".btn__sell"));
+
+            if (btnSell.GetAttribute("innerHTML").ToUpper().Trim() == "SELL NOW")
             {
-                driver.Navigate().GoToUrl($"https://marketplace.plantvsundead.com/farm#/plant/{id}");
-                Thread.Sleep(2000);
+                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
+                Thread.Sleep(tempoEspera);
 
-                var btnSell = driver.FindElement(By.CssSelector(".btn__sell"));
+                driver.FindElement(By.CssSelector(".input.tw-ml-4")).Clear();
+                var precoMedio = PlantasVendidas.FirstOrDefault(x => x.Key == classe).Value.Average(y => y.Preco);
 
-                if (btnSell.GetAttribute("innerHTML").ToUpper().Trim() == "SELL NOW")
-                {
-                    IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                    js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
-                    Thread.Sleep(1000);
+                driver.FindElement(By.CssSelector(".input.tw-ml-4")).SendKeys(Math.Round(precoMedio * percentualVenda, 2).ToString().Replace(".", "").Replace(",", "."));
 
-                    driver.FindElement(By.CssSelector(".input.tw-ml-4")).Clear();
-                    driver.FindElement(By.CssSelector(".input.tw-ml-4")).SendKeys(Math.Round(planta.Preco * percentualVenda, 2).ToString().Replace(".", "").Replace(",", "."));
-
-                    js.ExecuteScript("document.getElementsByClassName('sell tw-mt-10 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default')[0].click();");
-                    Thread.Sleep(20000);
-                }
+                js.ExecuteScript("document.getElementsByClassName('sell tw-mt-10 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default')[0].click();");
+                Thread.Sleep(tempoEspera * 40);
             }
+            //}
 
             GetMinhasPlantas();
-        }
-
-        private bool IsElementPresent(By by)
-        {
-            try
-            {
-                driver.FindElement(by);
-                return true;
-            }
-            catch (NoSuchElementException)
-            {
-                return false;
-            }
-        }
-
-        private bool IsAlertPresent()
-        {
-            try
-            {
-                driver.SwitchTo().Alert();
-                return true;
-            }
-            catch (NoAlertPresentException)
-            {
-                return false;
-            }
-        }
-
-        private string CloseAlertAndGetItsText()
-        {
-            try
-            {
-                IAlert alert = driver.SwitchTo().Alert();
-                string alertText = alert.Text;
-                if (acceptNextAlert)
-                {
-                    alert.Accept();
-                }
-                else
-                {
-                    alert.Dismiss();
-                }
-                return alertText;
-            }
-            finally
-            {
-                acceptNextAlert = true;
-            }
         }
     }
 }
