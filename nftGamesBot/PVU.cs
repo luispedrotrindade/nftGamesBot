@@ -426,7 +426,7 @@ namespace nftGamesBot
         private void VenderPlanta(string id, string classe)
         {
             var minhaPlanta = MinhasPlantas.FirstOrDefault(x => x.Id == id);
-            if (planta != null)
+            if (minhaPlanta != null)
             {
                 try
                 {
@@ -455,14 +455,14 @@ namespace nftGamesBot
                         Thread.Sleep(tempoEspera * 40);
                     }
                 }
+                catch (Exception ex)
+                {
+                    if (tempoEspera <= 2000)
+                        tempoEspera += 100;
+                    VenderPlanta(id, classe);
+                }
+                GetMinhasPlantas();
             }
-            catch (Exception ex)
-            {
-                if (tempoEspera <= 2000)
-                    tempoEspera += 100;
-                VenderPlanta(id, classe);
-            }
-            GetMinhasPlantas();
         }
     }
 }
