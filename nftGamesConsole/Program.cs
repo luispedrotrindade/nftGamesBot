@@ -12,6 +12,9 @@ namespace nftGamesConsole
         {
             PVU teste = new PVU();
             teste.Setup();
+
+            //AxieInfinity axieInfinity = new AxieInfinity();
+            //axieInfinity.Setup();
         }
     }
 }

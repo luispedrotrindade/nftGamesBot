@@ -18,17 +18,17 @@ namespace nftGamesBot
     public class PVU
     {
         private IWebDriver driver;
-        public bool comprarMotherThree = false; 
+        public bool comprarMotherThree = false;
         int minimoPlantasVendidas = 5;
-        int minimoCondicoes = 60;
+        int minimoCondicoes = 50;
         private bool acceptNextAlert = true;
-        private double percentualVenda = 0.98;
+        private double percentualVenda = 0.95;
         private double percentualAnomalia = 0.1;
-        public double fatorCorrecao = 0.9;
-        int tempoEsperaInicial = 600;
-        int tempoEspera = 600;
+        public double fatorCorrecao = 0.75;
+        int tempoEsperaInicial = 700;
+        int tempoEspera = 700;
         List<string> listIdPlantasPassadas = new List<string>();
-        public string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,wind,water,ice,parasite,dark&rarities=1,2";
+        public string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,wind,water,ice,parasite,dark";
         public Dictionary<string, List<Planta>> PlantasVendidas { get; set; }
         List<Planta> MinhasPlantas { get; set; }
         public Dictionary<string, double> Condicoes { get; set; }
@@ -70,6 +70,7 @@ namespace nftGamesBot
                     Thread.Sleep(tempoEspera);
                     var mainResult = false;
                     while (!mainResult)
+                    {
                         try
                         {
                             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
@@ -93,6 +94,8 @@ namespace nftGamesBot
                                     var divPreco = twml4.FindElement(By.TagName("div"));
                                     var preco = Convert.ToDouble(divPreco.FindElement(By.TagName("p")).Text.Replace(".", ","));
 
+
+
                                     if (listIdPlantasPassadas.Count >= 15)
                                     {
                                         listIdPlantasPassadas.RemoveRange(0, 5);
@@ -103,20 +106,17 @@ namespace nftGamesBot
                                         MinhasPlantas.RemoveRange(0, 5);
                                     }
 
-                                    if (GetCondicao(image.GetAttribute("src"), preco) && !listIdPlantasPassadas.Contains(id))
+                                    if (GetCondicao(image.GetAttribute("src"), preco, id) && !listIdPlantasPassadas.Contains(id))
                                     {
                                         ComprarPlanta(id, preco, url);
                                         GetMinhasPlantas();
                                     }
 
-                                    if (i++ >= 999)
-                                    {
-                                        i = 0;
-                                        GetCotacao();
-                                    }
                                     result = true;
                                 }
                             }
+
+                            RemoverAnomalias();
                             mainResult = true;
                         }
                         catch (Exception ex)
@@ -126,6 +126,29 @@ namespace nftGamesBot
                             Thread.Sleep(tempoEspera);
                             Console.WriteLine(ex.Message);
                         }
+
+                    }
+
+                    if (i >= 15)
+                    {
+                        GetMinhasPlantas();
+                    }
+
+                    if (i++ >= 499)
+                    {
+                        i = 0;
+                        GetCotacao();
+                    }
+
+                    Console.WriteLine("");
+                    Console.WriteLine("Condições: ");
+
+                    var condicoesToString = "";
+                    foreach (var condicao in Condicoes)
+                    {
+                        condicoesToString = $"{condicao.Key} {condicao.Value}";
+                        Console.WriteLine(condicoesToString);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -143,7 +166,7 @@ namespace nftGamesBot
             string url = "https://marketplace.plantvsundead.com/offering/bundle#/";
             driver.Navigate().GoToUrl(url);
 
-            Thread.Sleep(2000);
+            Thread.Sleep(tempoEspera);
 
             if (comprarMotherThree)
             {
@@ -151,7 +174,7 @@ namespace nftGamesBot
                 Thread.Sleep(2000);
             }
 
-            while (Condicoes.Count <= minimoCondicoes)
+            while (Condicoes.Count < minimoCondicoes)
             {
                 try
                 {
@@ -205,20 +228,7 @@ namespace nftGamesBot
                         }
                     }
 
-                    foreach (var plantaVendida in PlantasVendidas)
-                    {
-                        if (plantaVendida.Value.Count >= minimoPlantasVendidas)
-
-                            while (plantaVendida.Value.Any(x => x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
-                                                             //|| x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
-                                                                ))
-                            {
-                                plantaVendida.Value.RemoveAll(x =>
-                                                                       x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
-                                                                    //|| x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
-                                );
-                            }
-                    }
+                    RemoverAnomalias();
 
                     js = (IJavaScriptExecutor)driver;
                     if (comprarMotherThree)
@@ -237,11 +247,7 @@ namespace nftGamesBot
 
                     foreach (var plantaVendida in PlantasVendidas)
                     {
-                        if (plantaVendida.Value.Count >= minimoPlantasVendidas)
-                        {
-                            if (!Condicoes.Any(x => x.Key == plantaVendida.Key))
-                                Condicoes.Add(plantaVendida.Key, plantaVendida.Value.Average(x => x.Preco));
-                        }
+                        AdicionarCondicao(plantaVendida);
                     }
 
                     var conditionsLoading = "";
@@ -260,12 +266,57 @@ namespace nftGamesBot
             }
         }
 
-        private bool GetCondicao(string src, double price)
+
+        private void RemoverAnomalias()
+        {
+            foreach (var plantaVendida in PlantasVendidas)
+            {
+                if (plantaVendida.Value.Count >= minimoPlantasVendidas)
+
+                    while (plantaVendida.Value.Any(x => x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
+                                                        //|| x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
+                                                        ))
+                    {
+                        plantaVendida.Value.RemoveAll(x =>
+                                                                 x.Preco >= plantaVendida.Value.Average(y => y.Preco) * (1 + percentualAnomalia)
+                        //|| x.Preco <= plantaVendida.Value.Average(y => y.Preco) * (1 - percentualAnomalia)
+                        );
+                    }
+            }
+        }
+
+        private bool GetCondicao(string src, double price, string id)
         {
             if (Condicoes.Count == 0)
                 GetCotacao();
 
+            var planta = PlantasVendidas.FirstOrDefault(x => src.IndexOf($"/{x.Key}") > -1);
+
+            if (planta.Value == null)
+            {
+                var result = src.Split("/");
+                var key = result[result.Count() - 1].Replace(".png", "");
+                PlantasVendidas.Add(key, new List<Planta>());
+                planta = PlantasVendidas.FirstOrDefault(x => x.Key == key);
+            }
+
+            if (planta.Value.Count > minimoPlantasVendidas)
+                planta.Value.RemoveRange(0, planta.Value.Count - minimoPlantasVendidas);
+
+
+
+            planta.Value.Add(new Planta { Id = id, Preco = price });
+            RemoverAnomalias();
+
+            AdicionarCondicao(planta);
+
             return Condicoes.Any(x => src.IndexOf($"/{x.Key}") > -1 && price <= ((x.Value * fatorCorrecao)));
+        }
+
+        private void AdicionarCondicao(KeyValuePair<string, List<Planta>> planta)
+        {
+            if (!Condicoes.Any(x => x.Key == planta.Key) && planta.Value.Count >= minimoPlantasVendidas)
+                Condicoes.Add(planta.Key, planta.Value.Average(x => x.Preco));
         }
 
         public void GetMinhasPlantas()
@@ -340,43 +391,77 @@ namespace nftGamesBot
 
         private void ComprarPlanta(string id, double preco, string url)
         {
-            listIdPlantasPassadas.Add(id);
-            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-            driver.Navigate().GoToUrl(url);
-            Thread.Sleep(tempoEspera);
+            var result = false;
+            while (!result)
+            {
+                try
+                {
+                    listIdPlantasPassadas.Add(id);
+                    driver.Navigate().GoToUrl(url);
+                    IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                    Thread.Sleep(tempoEspera);
 
-            js = (IJavaScriptExecutor)driver;
-            string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
-            Thread.Sleep(tempoEspera);
-            MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
+                    js = (IJavaScriptExecutor)driver;
+                    string title = (string)js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
+                    Thread.Sleep(tempoEspera);
+                    MinhasPlantas.Add(new Planta { Id = id, Preco = preco });
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    tempoEspera += 100;
+                    Console.WriteLine(ex.Message);
+
+                    if (tempoEspera >= tempoEsperaInicial * 2)
+                    {
+                        tempoEspera = tempoEsperaInicial;
+                        BuscarPlantas();
+                    }
+                    else
+                        ComprarPlanta(id, preco, url);
+                }
+            }
         }
 
         private void VenderPlanta(string id, string classe)
         {
-            //var planta = MinhasPlantas.FirstOrDefault(x => x.Id == id);
-            //if (planta != null)
-            //{
-            driver.Navigate().GoToUrl($"https://marketplace.plantvsundead.com/farm#/plant/{id}");
-            Thread.Sleep(tempoEspera);
-
-            var btnSell = driver.FindElement(By.CssSelector(".btn__sell"));
-
-            if (btnSell.GetAttribute("innerHTML").ToUpper().Trim() == "SELL NOW")
+            var minhaPlanta = MinhasPlantas.FirstOrDefault(x => x.Id == id);
+            if (planta != null)
             {
-                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-                js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
-                Thread.Sleep(tempoEspera);
+                try
+                {
+                    driver.Navigate().GoToUrl($"https://marketplace.plantvsundead.com/farm#/plant/{id}");
+                    Thread.Sleep(tempoEspera);
 
-                driver.FindElement(By.CssSelector(".input.tw-ml-4")).Clear();
-                var precoMedio = PlantasVendidas.FirstOrDefault(x => x.Key == classe).Value.Average(y => y.Preco);
+                    var btnSell = driver.FindElement(By.CssSelector(".btn__sell"));
 
-                driver.FindElement(By.CssSelector(".input.tw-ml-4")).SendKeys(Math.Round(precoMedio * percentualVenda, 2).ToString().Replace(".", "").Replace(",", "."));
+                    if (btnSell.GetAttribute("innerHTML").ToUpper().Trim() == "SELL NOW")
+                    {
+                        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                        js.ExecuteScript("document.getElementsByClassName('btn__sell')[0].click();");
+                        Thread.Sleep(tempoEspera);
 
-                js.ExecuteScript("document.getElementsByClassName('sell tw-mt-10 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default')[0].click();");
-                Thread.Sleep(tempoEspera * 40);
+                        driver.FindElement(By.CssSelector(".input.tw-ml-4")).Clear();
+                        var precoMedio = PlantasVendidas.FirstOrDefault(x => x.Key == classe).Value.Average(y => y.Preco);
+
+                        var precoVenda = precoMedio >= minhaPlanta.Preco ? precoMedio : minhaPlanta.Preco;
+
+                        precoVenda = precoVenda <= precoMedio * 0.9 ? precoMedio * percentualVenda : precoVenda * percentualVenda;
+
+
+                        driver.FindElement(By.CssSelector(".input.tw-ml-4")).SendKeys(Math.Round(precoMedio * percentualVenda, 2).ToString().Replace(".", "").Replace(",", "."));
+
+                        js.ExecuteScript("document.getElementsByClassName('sell tw-mt-10 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default')[0].click();");
+                        Thread.Sleep(tempoEspera * 40);
+                    }
+                }
             }
-            //}
-
+            catch (Exception ex)
+            {
+                if (tempoEspera <= 2000)
+                    tempoEspera += 100;
+                VenderPlanta(id, classe);
+            }
             GetMinhasPlantas();
         }
     }
