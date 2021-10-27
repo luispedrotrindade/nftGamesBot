@@ -20,8 +20,8 @@ namespace nftGamesBot
         private IWebDriver driver;
 
         private string mainUrl = "https://marketplace.axieinfinity.com";
-        private int tempoEspera = 700;
-        private double precoMinimo = 0.029;
+        private int tempoEspera = 500;
+        private double precoMinimo = 0.028;
 
         [SetUp]
         public void Setup()
@@ -47,45 +47,37 @@ namespace nftGamesBot
                     driver.Navigate().GoToUrl(mainUrl);
                     Thread.Sleep(tempoEspera);
 
-                    while (true)
+
+
+                    IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
+                    var h5List = driver.FindElements(By.TagName("h5"));
+
+                    double price = 0;
+
+                    var i = 0;
+
+                    foreach (var h5 in h5List)
                     {
-                        try
+                        var span = h5.FindElement(By.TagName("span"));
+                        price = Convert.ToDouble(span.GetAttribute("innerHTML").Replace(".", ","));
+
+                        Console.WriteLine(price);
+
+                        if (price <= precoMinimo)
                         {
-
-                            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-
-                            var h5List = driver.FindElements(By.TagName("h5"));
-
-                            double price = 0;
-
-                            var i = 0;
-
-                            foreach (var h5 in h5List)
-                            {
-                                var span = h5.FindElement(By.TagName("span"));
-                                price = Convert.ToDouble(span.GetAttribute("innerHTML").Replace(".", ","));
-
-                                Console.WriteLine(price);
-
-                                if (price <= precoMinimo)
-                                {
-                                    h5.Click();
-                                    Thread.Sleep(tempoEspera * 3);
-                                    var buttons = driver.FindElements(By.TagName("button"));
-                                    buttons[0].Click();
-                                    Thread.Sleep(tempoEspera);
-                                }
-
-                                i++;
-                                if (i >= 9)
-                                    break;
-                            }
+                            h5.Click();
+                            Thread.Sleep(tempoEspera * 3);
+                            var buttons = driver.FindElements(By.TagName("button"));
+                            buttons[0].Click();
+                            Thread.Sleep(tempoEspera);
                         }
-                        catch (Exception ex)
-                        {
-                            Setup();
-                        }
+
+                        i++;
+                        if (i >= 9)
+                            break;
                     }
+
                 }
                 catch (Exception ex)
                 {

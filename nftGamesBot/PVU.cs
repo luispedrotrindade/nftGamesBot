@@ -20,7 +20,7 @@ namespace nftGamesBot
         private IWebDriver driver;
         public bool comprarMotherThree = false;
         int minimoPlantasVendidas = 5;
-        int minimoCondicoes = 50;
+        int minimoCondicoes = 15;
         private bool acceptNextAlert = true;
         private double percentualVenda = 0.95;
         private double percentualAnomalia = 0.1;
