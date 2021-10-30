@@ -19,16 +19,16 @@ namespace nftGamesBot
     {
         private IWebDriver driver;
         public bool comprarMotherThree = false;
-        int minimoPlantasVendidas = 5;
-        int minimoCondicoes = 15;
+        int minimoPlantasVendidas = 10;
+        int minimoCondicoes = 40;
         private bool acceptNextAlert = true;
         private double percentualVenda = 0.95;
         private double percentualAnomalia = 0.1;
-        public double fatorCorrecao = 0.75;
+        public double fatorCorrecao = 0.80;
         int tempoEsperaInicial = 700;
         int tempoEspera = 700;
         List<string> listIdPlantasPassadas = new List<string>();
-        public string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,wind,water,ice,parasite,dark";
+        public string mainUrl = "https://marketplace.plantvsundead.com/offering/bundle#/marketplace/plant?sort=latest&elements=electro,fire,metal,wind,water,ice";
         public Dictionary<string, List<Planta>> PlantasVendidas { get; set; }
         List<Planta> MinhasPlantas { get; set; }
         public Dictionary<string, double> Condicoes { get; set; }
@@ -129,7 +129,7 @@ namespace nftGamesBot
 
                     }
 
-                    if (i >= 15)
+                    if (i >= 50)
                     {
                         GetMinhasPlantas();
                     }
@@ -290,6 +290,8 @@ namespace nftGamesBot
             if (Condicoes.Count == 0)
                 GetCotacao();
 
+            return Condicoes.Any(x => src.IndexOf($"/{x.Key}") > -1 && price <= ((x.Value * fatorCorrecao)));
+
             var planta = PlantasVendidas.FirstOrDefault(x => src.IndexOf($"/{x.Key}") > -1);
 
             if (planta.Value == null)
@@ -310,7 +312,6 @@ namespace nftGamesBot
 
             AdicionarCondicao(planta);
 
-            return Condicoes.Any(x => src.IndexOf($"/{x.Key}") > -1 && price <= ((x.Value * fatorCorrecao)));
         }
 
         private void AdicionarCondicao(KeyValuePair<string, List<Planta>> planta)
@@ -442,14 +443,16 @@ namespace nftGamesBot
                         Thread.Sleep(tempoEspera);
 
                         driver.FindElement(By.CssSelector(".input.tw-ml-4")).Clear();
-                        var precoMedio = PlantasVendidas.FirstOrDefault(x => x.Key == classe).Value.Average(y => y.Preco);
 
-                        var precoVenda = precoMedio >= minhaPlanta.Preco ? precoMedio : minhaPlanta.Preco;
+                        var plantaVendida = PlantasVendidas.FirstOrDefault(x => x.Key == classe);
+                        var plantaMaisBarata = plantaVendida.Value.FirstOrDefault(x => x.Preco == plantaVendida.Value.Min(x => x.Preco));
+                        var plantaSegundaMaisBarata = plantaVendida.Value.FirstOrDefault(x => x.Preco == plantaVendida.Value.Where(x => x.Preco != plantaMaisBarata.Preco).Min(x => x.Preco));
 
-                        precoVenda = precoVenda <= precoMedio * 0.9 ? precoMedio * percentualVenda : precoVenda * percentualVenda;
+                        var precoVenda = plantaSegundaMaisBarata.Preco;
 
 
-                        driver.FindElement(By.CssSelector(".input.tw-ml-4")).SendKeys(Math.Round(precoMedio * percentualVenda, 2).ToString().Replace(".", "").Replace(",", "."));
+
+                        driver.FindElement(By.CssSelector(".input.tw-ml-4")).SendKeys(Math.Round(precoVenda * percentualVenda, 2).ToString().Replace(".", "").Replace(",", "."));
 
                         js.ExecuteScript("document.getElementsByClassName('sell tw-mt-10 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default')[0].click();");
                         Thread.Sleep(tempoEspera * 40);
